@@ -19,16 +19,37 @@ center_Y = height/2
 center_Z = height/2
 screen = pygame.display.set_mode((width,height))
 
-vertices = [[-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],[-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1]]
+connected_points = [
+                    [0,1],
+                    [1,2],
+                    [2,3],
+                    [3,0],
+                    [4,5],
+                    [5,6],
+                    [6,7],
+                    [7,4],
+                    [0,4],
+                    [1,5], 
+                    [2,6],
+                    [3,7]
+                    ]
+
+vertices = [(-1,-1,-1),(1,-1,-1),(1,1,-1),(-1,1,-1),(-1,-1,1),(1,-1,1),(1,1,1),(-1,1,1)]
 
 zoom = 50
 
-zoomed_vertices = []
+for connected_point in connected_points:
+    modified_points = []
+    for x, y, z in [vertices[connected_point[0]], vertices[connected_point[1]]]:
+        z -= 5
+        focale = 400/abs(z)
+        x , y = focale * x, focale * y 
+        x += center_X
+        y += center_Y
+        modified_points += [[x, y]]
+    pygame.draw.line(screen, WHITE, modified_points[0], modified_points[1])
 
-for vertice in vertices:
-    zoomed_vertices += [[center_X + vertice[0] * zoom, center_Y + vertice[1] * zoom, center_Z + vertice[2] * zoom]]
-
-print(zoomed_vertices)
+print(modified_points)
 
 while(ON):
     key = pygame.key.get_pressed()
@@ -38,7 +59,7 @@ while(ON):
             ON = False
         elif key[pygame.K_ESCAPE]:
             ON = False
-    pygame.draw.lines(screen, WHITE, True,zoomed_vertices)
+    
     pygame.display.flip()
 
 pygame.quit()
